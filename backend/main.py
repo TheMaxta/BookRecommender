@@ -45,7 +45,7 @@ def get_books(category: Optional[str] = None):
         return {"books": []}
     
     # Filter by category
-    filtered_df = df[df["Subject"] == category].head(10)
+    filtered_df = df[df["Subject"] == category].head(10).sort_values('rating', ascending=False)
     
     # Convert DataFrame rows to dictionaries
     books = filtered_df.to_dict(orient="records")
