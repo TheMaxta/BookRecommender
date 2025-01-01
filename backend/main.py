@@ -73,7 +73,7 @@ async def chat_with_book(request: ChatRequest):
             
         book = book_df.iloc[0]
         
-        system_prompt = f"""You are a helpful assistant discussing the book '{book['Title']}'. 
+        system_prompt = f"""You are a helpful assistant discussing the book with children. '{book['Title']}'. 
 Use the following book content to answer questions:
 
 {book['content']}
