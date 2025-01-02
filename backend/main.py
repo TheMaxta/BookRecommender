@@ -32,10 +32,20 @@ app.add_middleware(
 )
 
 # Path to your CSV file
-CSV_PATH = os.path.join(os.path.dirname(__file__), "all_book_data.csv")
+CSV_PATH = os.path.join(os.path.dirname(__file__), "enriched_dataset.csv")
 
 # Load the CSV into a DataFrame once at startup
-df = pd.read_csv(CSV_PATH)
+# When loading the DataFrame, add fillna for LibrariansSummary
+# Load the CSV into a DataFrame once at startup
+df = pd.read_csv(CSV_PATH, na_values=[''], keep_default_na=False)
+
+# Fill empty values for multiple columns
+df['LibrariansSummary'] = df['LibrariansSummary'].fillna("this book doesn't have a summary")
+df['PositiveCharacters'] = df['PositiveCharacters'].fillna("no positive characters listed")
+df['NegativeCharacters'] = df['NegativeCharacters'].fillna("no negative characters listed")
+
+df['error'] = df['error'].fillna("None")
+# df = df.fillna('')
 
 @app.get("/api/categories")
 def get_categories():
@@ -58,6 +68,9 @@ def get_books(category: Optional[str] = None):
     # Filter by category
     filtered_df = df[df["Subject"] == category].head(10).sort_values('rating', ascending=False)
     
+    # Convert DataFrame to records and handle NaN values
+    books = filtered_df.fillna('').to_dict(orient="records")
+
     # Convert DataFrame rows to dictionaries
     books = filtered_df.to_dict(orient="records")
     return {"books": books}
