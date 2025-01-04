@@ -47,11 +47,11 @@ async def main():
     if not raw_data_path.exists():
         console.print(f"[red]Error: No raw data found at {raw_data_path}[/]")
         return
-        
+
     df = pd.read_csv(raw_data_path)
-    
+
     processed_stories = []
-    
+
     with Progress() as progress:
         task = progress.add_task("[cyan]Processing stories...", total=len(df))
         
@@ -81,7 +81,7 @@ async def main():
             progress.update(task, advance=len(batch))
             
             # Optional: Add delay between batches
-            await asyncio.sleep(2)
+            await asyncio.sleep(30)
     
     # Create enriched dataset
     enriched_df = pd.DataFrame(processed_stories)
