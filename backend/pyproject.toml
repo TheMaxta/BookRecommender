@@ -1,26 +1,47 @@
+# pyproject.toml
 [tool.poetry]
-name = "backend"
+name = "bookdataset"
 version = "0.1.0"
-description = ""
+description = "Children's book dataset processing and API"
 authors = ["Maximillian Mahlke"]
-readme = "README.md"
+packages = [
+    { include = "bookdataset" },
+]
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = "^3.11"  # Changed from 3.13 to match your environment
 fastapi = "^0.115.6"
 uvicorn = "^0.34.0"
 pandas = "^2.2.3"
 pydantic = "^2.10.4"
 python-dotenv = "^1.0.1"
 openai = "^1.58.1"
+typer = "^0.9.0"
+rich = "^13.7.0"
+pyyaml = "^6.0.1"
+tenacity = "^8.2.3"
 
-
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+black = "^24.1.1"
+isort = "^5.13.2"
+mypy = "^1.8.0"
 
 [tool.poetry.scripts]
-dev = "uvicorn main:app --host 0.0.0.0 --port 5001 --reload"
-start = "uvicorn main:app"
-
+dev = "uvicorn bookdataset.api.endpoints:app --host 0.0.0.0 --port 5001 --reload"
+start = "uvicorn bookdataset.api.endpoints:app"
+process = "bookdataset.main:app"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+# Additional tool configurations
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+show_error_codes = true
