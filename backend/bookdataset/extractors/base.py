@@ -1,0 +1,32 @@
+# bookdataset/extractors/base.py
+from abc import ABC, abstractmethod
+from typing import Dict, Any
+import openai
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+class BaseExtractor(ABC):
+    def __init__(self, config: Dict[str, Any]):
+        self.config = config
+        self.model = config.get("model", "gpt-4")
+
+    @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=4, max=10))
+    async def _call_openai(self, system_message: str, user_message: str) -> Dict[str, Any]:
+        """Make an OpenAI API call with retry logic"""
+        try:
+            response = await openai.ChatCompletion.acreate(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": user_message},
+                ],
+                temperature=0.7,
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            print(f"Error in OpenAI call: {e}")
+            raise
+
+    @abstractmethod
+    async def extract(self, content: str) -> Dict[str, Any]:
+        """Extract information from the content"""
+        pass
