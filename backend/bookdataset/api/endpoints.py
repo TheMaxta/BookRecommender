@@ -6,11 +6,11 @@ from pydantic import BaseModel
 import pandas as pd
 from pathlib import Path
 
-from ..data.models import EnrichedStory
-from ..data.manager import DataManager
-from ..core.chat import ChatManager
+from bookdataset.data.models import EnrichedStory
+from bookdataset.data.manager import DataManager
+from bookdataset.core.chat import ChatManager
 
-# Pydantic models for API
+# Pydantic models
 class Message(BaseModel):
     role: str
     content: str
@@ -18,12 +18,6 @@ class Message(BaseModel):
 class ChatRequest(BaseModel):
     unique_id: str
     messages: List[Message]
-
-class BookResponse(BaseModel):
-    books: List[Dict]
-
-class CategoryResponse(BaseModel):
-    categories: List[str]
 
 # Initialize FastAPI
 app = FastAPI()
@@ -42,35 +36,29 @@ app.add_middleware(
 )
 
 # Initialize managers
-data_manager = DataManager(Path("data"))
+data_manager = DataManager()  # Will use default path to enriched_dataset.csv
 chat_manager = ChatManager()
 
 # Load data at startup
 df = data_manager.load_enriched_dataset()
 
-# Fill NA values
-df['LibrariansSummary'] = df['LibrariansSummary'].fillna("This book doesn't have a summary")
-df['PositiveCharacters'] = df['PositiveCharacters'].fillna("No positive characters listed")
-df['NegativeCharacters'] = df['NegativeCharacters'].fillna("No negative characters listed")
-df['error'] = df['error'].fillna("None")
-
-@app.get("/api/categories", response_model=CategoryResponse)
+@app.get("/api/categories")
 def get_categories():
     """Returns a unique list of subjects (categories)."""
     categories = df["Subject"].unique().tolist()
-    return CategoryResponse(categories=categories)
+    return {"categories": categories}
 
-@app.get("/api/books", response_model=BookResponse)
+@app.get("/api/books")
 def get_books(category: Optional[str] = None):
     """Returns top 10 books filtered by category."""
     if not category:
-        return BookResponse(books=[])
+        return {"books": []}
     
     # Filter by category and sort by rating
     filtered_df = df[df["Subject"] == category].head(10).sort_values('rating', ascending=False)
     books = filtered_df.fillna('').to_dict(orient="records")
     
-    return BookResponse(books=books)
+    return {"books": books}
 
 @app.post("/api/chat")
 async def chat_with_book(request: ChatRequest):
