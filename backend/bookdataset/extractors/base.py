@@ -19,7 +19,7 @@ aclient = AsyncOpenAI(
 class BaseExtractor(ABC):
     def __init__(self, config: Dict[str, Any]):
         self.config = config
-        self.model = config.get("model", "gpt-4o")  # Updated to valid model name
+        self.model = config.get("model")  # Updated to valid model name
 
     @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=4, max=10))
     async def _call_openai(self, system_message: str, user_message: str) -> Dict[str, Any]:

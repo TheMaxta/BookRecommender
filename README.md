@@ -17,7 +17,7 @@ cd backend
 
 Start the backend server:
 ```bash
-uvicorn bookdataset.api.endpoints:app --host 0.0.0.0 --port 5001 --reload
+poetry run uvicorn bookdataset.api.endpoints:app --host 0.0.0.0 --port 5001 --reload
 ```
 
 ### Frontend 

@@ -13,6 +13,7 @@ const subjects = [
   { name: "Adventure", icon: Compass },
   { name: "Fantasy and Imagination", icon: Wand2 },
   { name: "Life Lessons", icon: Lightbulb },
+  
 ]
 
 const colors = [

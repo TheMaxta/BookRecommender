@@ -43,7 +43,7 @@ async def main():
     librarian_extractor = LibrarianExtractor(config)
     
     # Load raw dataset
-    raw_data_path = project_root / "data" / "raw" / "stories.csv"
+    raw_data_path = project_root / "booksdataset" /"data" / "raw" / "stories.csv"
     if not raw_data_path.exists():
         console.print(f"[red]Error: No raw data found at {raw_data_path}[/]")
         return
@@ -56,7 +56,7 @@ async def main():
         task = progress.add_task("[cyan]Processing stories...", total=len(df))
         
         # Process in batches to avoid rate limits
-        batch_size = 5
+        batch_size = 2
         for i in range(0, len(df), batch_size):
             batch = df.iloc[i:i+batch_size]
             
@@ -68,7 +68,7 @@ async def main():
                     librarian_extractor
                 ) for _, row in batch.iterrows()
             ]
-            
+             
             # Wait for batch results
             batch_results = await asyncio.gather(*tasks)
             
