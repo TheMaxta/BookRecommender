@@ -43,7 +43,7 @@ async def main():
     librarian_extractor = LibrarianExtractor(config)
     
     # Load raw dataset
-    raw_data_path = project_root / "booksdataset" /"data" / "raw" / "stories.csv"
+    raw_data_path = project_root / "bookdataset" /"data" / "raw" / "stories.csv"
     if not raw_data_path.exists():
         console.print(f"[red]Error: No raw data found at {raw_data_path}[/]")
         return
@@ -87,7 +87,7 @@ async def main():
     enriched_df = pd.DataFrame(processed_stories)
     
     # Save results
-    output_path = project_root / "data" / "processed" / "enriched_dataset.csv"
+    output_path = project_root / "bookdataset" / "data" / "processed" / "enriched_dataset.csv"
     output_path.parent.mkdir(exist_ok=True)
     enriched_df.to_csv(output_path, index=False)
     
